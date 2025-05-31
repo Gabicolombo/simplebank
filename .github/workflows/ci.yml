@@ -19,13 +19,15 @@ jobs:
       postgres:
         image: postgres:15
         env:
+          DB_HOST: postgres
+          DB_PORT: 5432
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: admin123
           POSTGRES_DB: simple_bank
         ports:
-          - 5432:5433
+          - 5432:5432
         options: >-
-          --health-cmd "pg_isready"
+          --health-cmd "pg_isready -U admin -d simple_bank"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -43,9 +45,17 @@ jobs:
           curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
           sudo mv migrate.linux-amd64 /usr/bin/migrate
           which migrate
+    
+    - name: Wait for Postgres to be ready
+      run: |
+        for i in {1..15}; do
+          pg_isready -h postgres -p 5432 && echo "Postgres is ready!" && break
+          echo "Waiting for postgres... ($i)"
+          sleep 3
+        done
 
     - name: Run migrations
-      run: make migrateup
+      run: DB_HOST=postgres DB_PORT=5432 make migrateup
 
     - name: Test
       run: make test
