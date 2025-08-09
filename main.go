@@ -9,6 +9,7 @@ import (
 	"github.com/techschool/simplebank/api"
 	db "github.com/techschool/simplebank/db/sqlc"
 	"github.com/techschool/simplebank/util"
+	_"github.com/golang/mock/mockgen/model"
 )
 
 func main() {
