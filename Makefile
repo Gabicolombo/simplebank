@@ -1,4 +1,4 @@
-.PHONY: up down createdb dropdb migrateup migratedown sqlc test
+.PHONY: up down createdb dropdb migrateup migratedown sqlc test mock
 
 DB_HOST ?= localhost
 DB_PORT ?= 5433
@@ -30,6 +30,9 @@ sqlc:
 
 test:
 	go test -v -cover ./...
+
+mock:
+	mockgen -source=db/sqlc/store.go -destination=db/mock/store.go -package=mockdb
 
 server:
 	go run main.go
