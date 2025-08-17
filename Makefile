@@ -1,4 +1,4 @@
-.PHONY: up down createdb dropdb migrateup migratedown sqlc test mock
+.PHONY: up down createdb dropdb migrateup migratedown sqlc test mock migrateup1 migratedown1
 
 DB_HOST ?= localhost
 DB_PORT ?= 5433
@@ -22,8 +22,14 @@ dropdb:
 migrateup:
 	migrate -path db/migration -database "$(DB_SOURCE)" -verbose up
 
+migrateup1:
+	migrate -path db/migration -database "$(DB_SOURCE)" -verbose up 1
+
 migratedown:
 	migrate -path db/migration -database "$(DB_SOURCE)" -verbose down
+
+migratedown1:
+	migrate -path db/migration -database "$(DB_SOURCE)" -verbose down 1
 
 sqlc:
 	sqlc generate
