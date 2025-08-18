@@ -38,7 +38,7 @@ test:
 	go test -v -cover ./...
 
 mock:
-	mockgen -source=db/sqlc/store.go -destination=db/mock/store.go -package=mockdb
+	mockgen -source=db/sqlc/querier.go -destination=db/mock/store.go -package=mockdb
 
 server:
 	go run main.go
