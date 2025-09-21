@@ -4,12 +4,12 @@ import (
 	"context"
 	"log"
 
+	_ "github.com/golang/mock/mockgen/model"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq"
 	"github.com/techschool/simplebank/api"
 	db "github.com/techschool/simplebank/db/sqlc"
 	"github.com/techschool/simplebank/util"
-	_"github.com/golang/mock/mockgen/model"
 )
 
 func main() {
@@ -24,6 +24,14 @@ func main() {
 	}
 
 	store := db.NewStore(connPool)
-	server := api.NewServer(store)
+	server, err := api.NewServer(config, store)
+
+	if err != nil {
+		log.Fatal("cannot create server:", err)
+	}
+
 	err = server.Start(config.ServerAddress)
+	if err != nil {
+		log.Fatal("cannot start server:", err)
+	}
 }
