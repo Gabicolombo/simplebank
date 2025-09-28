@@ -1,6 +1,3 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
 name: ci-test
 
 on:
@@ -10,9 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   test:
-    name: Test
     runs-on: ubuntu-latest
 
     services:
@@ -27,35 +22,54 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U admin -d simple_bank"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.20'
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
 
-    - name: Install golang-migrate
-      run: |
+      - name: Install golang-migrate
+        run: |
           curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
           sudo mv migrate.linux-amd64 /usr/bin/migrate
           which migrate
-    
-    - name: Wait for Postgres to be ready
-      run: |
-        for i in {1..15}; do
-          pg_isready -h postgres -p 5432 && echo "Postgres is ready!" && break
-          echo "Waiting for postgres... ($i)"
-          sleep 3
-        done
 
-    - name: Run migrations
-      run: DB_HOST=postgres DB_PORT=5432 make migrateup
+      - name: Wait for Postgres to be ready
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: admin
+          DB_PASSWORD: admin123
+          DB_NAME: simple_bank
+          PGPASSWORD: admin123
+        run: |
+          for i in {1..30}; do
+            pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER && echo "Postgres is ready!" && break
+            echo "Waiting for postgres... ($i)"
+            sleep 2
+          done
 
-    - name: Test
-      run: make test
+      - name: Run migrations
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: admin
+          DB_PASSWORD: admin123
+          DB_NAME: simple_bank
+        run: make migrateup
+
+      - name: Run tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: admin
+          DB_PASSWORD: admin123
+          DB_NAME: simple_bank
+        run: make test

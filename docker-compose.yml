@@ -1,4 +1,5 @@
 version: "3.9"
+
 services:
   db:
     image: postgres:15
@@ -12,5 +13,17 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  simplebank:
+    build: .
+    container_name: simplebank
+    ports:
+      - "8088:8088"
+    environment:
+      GIN_MODE: release
+      DB_SOURCE: "postgresql://admin:admin123@db:5432/simple_bank?sslmode=disable"
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
