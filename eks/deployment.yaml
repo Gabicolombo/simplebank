@@ -17,5 +17,6 @@ spec:
       containers:
         - name: simple-bank-api
           image: simple-bank-api-image:latest
+          imagePullPolicy: Always # Always pull the latest image
           ports:
             - containerPort: 8080
