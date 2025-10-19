@@ -10,3 +10,10 @@ To create an image:
 docker build -t simplebank:latest .
 
 ```
+
+# To generate dbdocs
+
+```bash
+dbdocs login
+dbdocs build docs/db.dbml
+```

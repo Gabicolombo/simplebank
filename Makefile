@@ -1,4 +1,4 @@
-.PHONY: up down createdb dropdb migrateup migratedown sqlc test mock server
+.PHONY: up down createdb dropdb migrateup migratedown db_docs db_schema sqlc test mock server
 
 # Variáveis de ambiente (podem ser sobrescritas pelo CI)
 DB_HOST ?= localhost
@@ -39,6 +39,12 @@ migratedown:
 
 migratedown1:
 	migrate -path db/migration -database "$(DB_SOURCE)" -verbose down 1
+
+db_docs:
+	dbdocs build docs/db.dbml
+
+db_schema:
+	dbml2sql --postgres -o docs/schema.sql docs/db.dbml
 
 sqlc:
 	sqlc generate
