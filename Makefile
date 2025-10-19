@@ -2,7 +2,7 @@
 
 # Variáveis de ambiente (podem ser sobrescritas pelo CI)
 DB_HOST ?= localhost
-DB_PORT ?= 5432
+DB_PORT ?= 5433
 DB_USER ?= admin
 DB_PASSWORD ?= admin123
 DB_NAME ?= simple_bank
@@ -47,7 +47,7 @@ test:
 	go test -v -cover ./...
 
 mock:
-	mockgen -source=db/sqlc/querier.go -destination=db/mock/store.go -package=mockdb
+	mockgen -package mockdb -destination db/mock/store.go github.com/techschool/simplebank/db/sqlc Store
 
 server:
 	go run main.go
