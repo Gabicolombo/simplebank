@@ -55,5 +55,10 @@ test:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/techschool/simplebank/db/sqlc Store
 
+# here we need to force the regenaration using `make -B proto`
+proto:
+	rm -f pb/*.go
+	protoc --proto_path=proto --go_out=pb --go-grpc_out=pb --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative proto/*.proto
+
 server:
 	go run main.go
