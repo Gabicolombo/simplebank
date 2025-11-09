@@ -17,3 +17,12 @@ docker build -t simplebank:latest .
 dbdocs login
 dbdocs build docs/db.dbml
 ```
+
+# To open the documentation
+
+```
+make server
+```
+
+open in `localhost:8088`
+
