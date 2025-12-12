@@ -26,14 +26,14 @@ var File_service_simple_bank_proto protoreflect.FileDescriptor
 
 const file_service_simple_bank_proto_rawDesc = "" +
 	"\n" +
-	"\x19service_simple_bank.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x15rpc_create_user.proto\x1a\x14rpc_login_user.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\xb2\x01\n" +
+	"\x19service_simple_bank.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x15rpc_create_user.proto\x1a\x14rpc_login_user.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\xcd\x02\n" +
 	"\n" +
-	"SimpleBank\x12W\n" +
+	"SimpleBank\x12\x9c\x01\n" +
 	"\n" +
-	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/create_user\x12K\n" +
-	"\tLoginUser\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/login_userB\x89\x01\x92Aa\x12_\n" +
+	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"_\x92AB\x12\x11Create a new user\x1a-Creates a new user in the Simple Bank system.\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/create_user\x12\x9f\x01\n" +
+	"\tLoginUser\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"m\x92AQ\x12\fLogin a user\x1aAAuthenticates a user and returns an access token & refresh token.\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/login_userB\x89\x01\x92Aa\x12_\n" +
 	"\x0fSimple Bank API\"G\n" +
-	"\vTech School\x12\x1dhttps://github.com/techschool\x1a\x19techschool.guru@gmail.com2\x031.0Z#github.com/techschool/simplebank/pbb\x06proto3"
+	"\vTech School\x12\x1dhttps://github.com/techschool\x1a\x19techschool.guru@gmail.com2\x031.1Z#github.com/techschool/simplebank/pbb\x06proto3"
 
 var file_service_simple_bank_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),  // 0: pb.CreateUserRequest
