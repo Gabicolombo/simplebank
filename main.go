@@ -6,6 +6,9 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/golang/mock/mockgen/model"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -33,9 +36,30 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
+	// run db migration
+	runDBMigration(config.MigrationURL, config.DBSource)
+
 	store := db.NewStore(connPool)
 	go runGatewayServer(config, store)
 	runGrpcServer(config, store)
+}
+
+// runDBMigration applies all pending database schema migrations before starting the servers.
+// It uses migrationURL as the source of migration files (for example, a "file://" URL)
+// and dbSource as the database connection string for the migration tool.
+// If creating the migration instance or applying migrations fails with any error
+// other than migrate.ErrNoChange, the function logs the error and terminates the process.
+func runDBMigration(migrationURL string, dbSource string) {
+	migration, err := migrate.New(migrationURL, dbSource)
+	if err != nil {
+		log.Fatal("cannot create new migrate instance:", err)
+	}
+	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatal("failed to run migrate up:", err)
+	}
+
+	log.Println("db migration completed")
+	migration.Close()
 }
 
 func runGrpcServer(config util.Config, store db.Store) {
