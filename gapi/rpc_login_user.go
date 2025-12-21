@@ -3,6 +3,7 @@ package gapi
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/techschool/simplebank/db/sqlc"
@@ -22,7 +23,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.
 	}
 	user, err := server.store.GetUser(ctx, req.GetUsername())
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, status.Errorf(codes.NotFound, "user not found: %v", err)
 		}
 		return nil, status.Errorf(codes.Internal, "cannot get user: %v", err)
