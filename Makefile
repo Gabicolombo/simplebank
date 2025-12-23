@@ -1,4 +1,4 @@
-.PHONY: up down createdb dropdb migrateup migratedown db_docs db_schema sqlc test mock server
+.PHONY: up down createdb dropdb migrateup migratedown db_docs db_schema sqlc test mock server proto redis
 
 # Variáveis de ambiente (podem ser sobrescritas pelo CI)
 DB_HOST ?= localhost
@@ -65,6 +65,9 @@ proto:
 	--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=simple_bank \
 	proto/*.proto
 	statik -src=./docs/swagger -dest=./docs
+
+redis:
+	docker run --name redis -p 6379:6379 -d redis:8-alpine
 
 server:
 	go run main.go
