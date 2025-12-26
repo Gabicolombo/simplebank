@@ -9,6 +9,8 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
+	db "github.com/techschool/simplebank/db/sqlc"
+	"github.com/techschool/simplebank/util"
 )
 
 const TaskTypeSendVerifyEmail = "task:send_verify_email"
@@ -52,7 +54,35 @@ func (processor *RedisTaskProcessor) ProcessTaskSendVerifyEmail(ctx context.Cont
 		return fmt.Errorf("failed to get user: %w", err)
 	}
 
-	// todo: send email to user
+	verifyEmail, err := processor.store.CreateVerifyEmail(ctx, db.CreateVerifyEmailParams{
+		Username:   user.Username,
+		Email:      user.Email,
+		SecretCode: util.RandomString(32),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create verify email: %w", err)
+	}
+
+	subject := "Welcome to Simple Bank! Verify your email"
+	verifyUrl := fmt.Sprintf("http://simple-bank.org?id=%d&secret_code=%s", verifyEmail.ID, verifyEmail.SecretCode)
+	content := fmt.Sprintf(`Hello %s,<br/>
+		<br/>
+		Thank you for registering with us!
+		<br/>
+		<br/>
+		Please <a href="%s">click here to verify your email</a>.<br/>
+		<br/>
+		Best regards,<br/>
+		The Simple Bank Team
+		`, user.FullName, verifyUrl)
+
+	to := []string{user.Email}
+	err =
+		processor.mailer.SendEmail(subject, content, to, nil, nil, nil)
+
+	if err != nil {
+		return fmt.Errorf("failed to send verify email: %w", err)
+	}
 
 	log.Info().Str("type", task.Type()).Bytes("payload", task.Payload()).
 		Str("email", user.Email).Msg("task processed successfully")

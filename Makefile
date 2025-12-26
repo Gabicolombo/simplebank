@@ -1,4 +1,4 @@
-.PHONY: up down createdb dropdb migrateup migratedown db_docs db_schema sqlc test mock server proto redis
+.PHONY: up down createdb dropdb migrateup migratedown db_docs db_schema sqlc test mock server proto redis new_migration
 
 # Variáveis de ambiente (podem ser sobrescritas pelo CI)
 DB_HOST ?= localhost
@@ -39,6 +39,9 @@ migratedown:
 
 migratedown1:
 	migrate -path db/migration -database "$(DB_SOURCE)" -verbose down 1
+
+new_migration:
+	migrate create -ext sql -dir db/migration -seq $(name)
 
 db_docs:
 	dbdocs build docs/db.dbml

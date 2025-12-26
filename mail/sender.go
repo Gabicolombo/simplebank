@@ -23,9 +23,8 @@ type GmailSender struct {
 	fromEmailPassword string
 }
 
-func NewGmailSender(name string, fromEmailAddress string, fromEmailUsername string, fromEmailPassword string) *GmailSender {
+func NewGmailSender(fromEmailAddress string, fromEmailUsername string, fromEmailPassword string) *GmailSender {
 	return &GmailSender{
-		name:              name,
 		fromEmailAddress:  fromEmailAddress,
 		fromEmailUsername: fromEmailUsername,
 		fromEmailPassword: fromEmailPassword,
