@@ -26,34 +26,39 @@ var File_service_simple_bank_proto protoreflect.FileDescriptor
 
 const file_service_simple_bank_proto_rawDesc = "" +
 	"\n" +
-	"\x19service_simple_bank.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x14rpc_login_user.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\xf8\x03\n" +
+	"\x19service_simple_bank.proto\x12\x02pb\x1a\x1cgoogle/api/annotations.proto\x1a\x15rpc_create_user.proto\x1a\x15rpc_update_user.proto\x1a\x14rpc_login_user.proto\x1a\x16rpc_verify_email.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\x9b\x05\n" +
 	"\n" +
 	"SimpleBank\x12\x9c\x01\n" +
 	"\n" +
 	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"_\x92AB\x12\x11Create a new user\x1a-Creates a new user in the Simple Bank system.\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/create_user\x12\xa8\x01\n" +
 	"\n" +
 	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"k\x92AN\x12\x17Update an existing user\x1a3Updates an existing user in the Simple Bank system.\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/update_user\x12\x9f\x01\n" +
-	"\tLoginUser\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"m\x92AQ\x12\fLogin a user\x1aAAuthenticates a user and returns an access token & refresh token.\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/login_userB\x89\x01\x92Aa\x12_\n" +
+	"\tLoginUser\x12\x10.pb.LoginRequest\x1a\x11.pb.LoginResponse\"m\x92AQ\x12\fLogin a user\x1aAAuthenticates a user and returns an access token & refresh token.\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/login_user\x12\xa0\x01\n" +
+	"\vVerifyEmail\x12\x16.pb.VerifyEmailRequest\x1a\x17.pb.VerifyEmailResponse\"`\x92AE\x12\x15Verify a user's email\x1a,Use this API to verify user's email address.\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/verify_emailB\x89\x01\x92Aa\x12_\n" +
 	"\x0fSimple Bank API\"G\n" +
 	"\vTech School\x12\x1dhttps://github.com/techschool\x1a\x19techschool.guru@gmail.com2\x031.2Z#github.com/techschool/simplebank/pbb\x06proto3"
 
 var file_service_simple_bank_proto_goTypes = []any{
-	(*CreateUserRequest)(nil),  // 0: pb.CreateUserRequest
-	(*UpdateUserRequest)(nil),  // 1: pb.UpdateUserRequest
-	(*LoginRequest)(nil),       // 2: pb.LoginRequest
-	(*CreateUserResponse)(nil), // 3: pb.CreateUserResponse
-	(*UpdateUserResponse)(nil), // 4: pb.UpdateUserResponse
-	(*LoginResponse)(nil),      // 5: pb.LoginResponse
+	(*CreateUserRequest)(nil),   // 0: pb.CreateUserRequest
+	(*UpdateUserRequest)(nil),   // 1: pb.UpdateUserRequest
+	(*LoginRequest)(nil),        // 2: pb.LoginRequest
+	(*VerifyEmailRequest)(nil),  // 3: pb.VerifyEmailRequest
+	(*CreateUserResponse)(nil),  // 4: pb.CreateUserResponse
+	(*UpdateUserResponse)(nil),  // 5: pb.UpdateUserResponse
+	(*LoginResponse)(nil),       // 6: pb.LoginResponse
+	(*VerifyEmailResponse)(nil), // 7: pb.VerifyEmailResponse
 }
 var file_service_simple_bank_proto_depIdxs = []int32{
 	0, // 0: pb.SimpleBank.CreateUser:input_type -> pb.CreateUserRequest
 	1, // 1: pb.SimpleBank.UpdateUser:input_type -> pb.UpdateUserRequest
 	2, // 2: pb.SimpleBank.LoginUser:input_type -> pb.LoginRequest
-	3, // 3: pb.SimpleBank.CreateUser:output_type -> pb.CreateUserResponse
-	4, // 4: pb.SimpleBank.UpdateUser:output_type -> pb.UpdateUserResponse
-	5, // 5: pb.SimpleBank.LoginUser:output_type -> pb.LoginResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 3: pb.SimpleBank.VerifyEmail:input_type -> pb.VerifyEmailRequest
+	4, // 4: pb.SimpleBank.CreateUser:output_type -> pb.CreateUserResponse
+	5, // 5: pb.SimpleBank.UpdateUser:output_type -> pb.UpdateUserResponse
+	6, // 6: pb.SimpleBank.LoginUser:output_type -> pb.LoginResponse
+	7, // 7: pb.SimpleBank.VerifyEmail:output_type -> pb.VerifyEmailResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -67,6 +72,7 @@ func file_service_simple_bank_proto_init() {
 	file_rpc_create_user_proto_init()
 	file_rpc_update_user_proto_init()
 	file_rpc_login_user_proto_init()
+	file_rpc_verify_email_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
