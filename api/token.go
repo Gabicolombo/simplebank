@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type renewAccessTokenRequest struct {
@@ -33,7 +32,7 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	session, err := server.store.GetSession(ctx, pgtype.UUID{Bytes: refreshPayload.ID, Valid: true})
+	session, err := server.store.GetSession(ctx, refreshPayload.ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -61,7 +60,7 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	if time.Now().After(session.ExpiresAt.Time) {
+	if time.Now().After(session.ExpiresAt) {
 		err := fmt.Errorf("expired session")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return

@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	pgtype "github.com/jackc/pgx/v5/pgtype"
+	uuid "github.com/google/uuid"
 	db "github.com/techschool/simplebank/db/sqlc"
 )
 
@@ -216,7 +216,7 @@ func (mr *MockStoreMockRecorder) GetEntry(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // GetSession mocks base method.
-func (m *MockStore) GetSession(arg0 context.Context, arg1 pgtype.UUID) (db.Session, error) {
+func (m *MockStore) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.Session, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetSession", arg0, arg1)
 	ret0, _ := ret[0].(db.Session)

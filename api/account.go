@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -34,8 +33,6 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	account, err := server.store.CreateAccount(ctx, arg)
 
 	if err != nil {
-		fmt.Printf("err type: %T\n", err)
-		fmt.Println("err value:", err)
 		if strings.Contains(err.Error(), "accounts_owner_fkey") || strings.Contains(err.Error(), "unique_violation") {
 			ctx.JSON(http.StatusForbidden, errorResponse(err))
 			return

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/techschool/simplebank/db/sqlc"
 	"github.com/techschool/simplebank/pb"
 	"github.com/techschool/simplebank/util"
@@ -49,13 +48,13 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginRequest) (*pb.
 	}
 	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
-		ID:           pgtype.UUID{Bytes: refreshPayload.ID, Valid: true},
+		ID:           refreshPayload.ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
 		UserAgent:    mtdt.UserAgent,
 		ClientIp:     mtdt.ClientIP,
 		IsBlocked:    false,
-		ExpiresAt:    pgtype.Timestamptz{Time: refreshPayload.ExpiredAt, Valid: true},
+		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
 
 	if err != nil {

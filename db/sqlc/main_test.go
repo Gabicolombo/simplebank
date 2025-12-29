@@ -7,11 +7,9 @@ import (
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	_ "github.com/lib/pq"
 	"github.com/techschool/simplebank/util"
 )
 
-var testQueries *Queries
 var testStore Store
 
 func TestMain(m *testing.M) {
@@ -26,7 +24,6 @@ func TestMain(m *testing.M) {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	testQueries = New(connPool)
 	testStore = NewStore(connPool)
 
 	os.Exit(m.Run())

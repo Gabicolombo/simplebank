@@ -30,11 +30,17 @@ type userResponse struct {
 
 func newUserResponse(user db.User) userResponse {
 	return userResponse{
-		Username:          user.Username,
-		FullName:          user.FullName,
-		Email:             user.Email,
-		PasswordChangedAt: user.PasswordChangedAt,
-		CreatedAt:         user.CreatedAt,
+		Username: user.Username,
+		FullName: user.FullName,
+		Email:    user.Email,
+		PasswordChangedAt: pgtype.Timestamptz{
+			Time:  user.PasswordChangedAt,
+			Valid: true,
+		},
+		CreatedAt: pgtype.Timestamptz{
+			Time:  user.CreatedAt,
+			Valid: true,
+		},
 	}
 }
 
@@ -121,13 +127,13 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
-		ID:           pgtype.UUID{Bytes: refreshPayload.ID, Valid: true},
+		ID:           refreshPayload.ID,
 		Username:     user.Username,
 		RefreshToken: refreshToken,
 		UserAgent:    ctx.Request.UserAgent(),
 		ClientIp:     ctx.ClientIP(),
 		IsBlocked:    false,
-		ExpiresAt:    pgtype.Timestamptz{Time: refreshPayload.ExpiredAt, Valid: true},
+		ExpiresAt:    refreshPayload.ExpiredAt,
 	})
 
 	if err != nil {
@@ -136,7 +142,7 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	rsp := LoginUserResponse{
-		SessionID:             session.ID.Bytes,
+		SessionID:             session.ID,
 		AccessToken:           accessToken,
 		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
 		RefreshToken:          refreshToken,
