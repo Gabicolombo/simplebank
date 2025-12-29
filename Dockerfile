@@ -12,6 +12,7 @@ COPY app.env .
 COPY start.sh .
 RUN chmod +x /app/start.sh
 COPY db/migration ./db/migration
+COPY --from=builder /app/db/migration ./db/migration  
 
 EXPOSE 8088
 CMD ["/app/main"]

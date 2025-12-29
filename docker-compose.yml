@@ -14,16 +14,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7-alpine
+
   simplebank:
     build: .
     container_name: simplebank
     ports:
       - "8088:8088"
+      - "9099:9099"
     environment:
-      GIN_MODE: release
-      DB_SOURCE: "postgresql://admin:admin123@db:5432/simple_bank?sslmode=disable"
+      - ENVIRONMENT=production
+      - DB_SOURCE=postgresql://admin:admin123@db:5432/simple_bank?sslmode=disable
+      - REDIS_ADDRESS=redis:6379
     depends_on:
       - db
+      - redis
 
 volumes:
   postgres_data:
