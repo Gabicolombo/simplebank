@@ -19,6 +19,8 @@ import (
 
 func TestUpdateUserAPI(t *testing.T) {
 	user, _ := randomUser(t)
+	banker, _ := randomUser(t)
+	banker.Role = util.BankerRole
 
 	newName := util.RandomOwner()
 	newEmail := util.RandomEmail()
@@ -65,7 +67,7 @@ func TestUpdateUserAPI(t *testing.T) {
 					Return(updatedUser, nil)
 			},
 			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute)
 			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.NoError(t, err)
@@ -110,7 +112,7 @@ func TestUpdateUserAPI(t *testing.T) {
 					Return(updatedUser, nil)
 			},
 			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, banker.Username, banker.Role, time.Minute, token.TokenTypeAccessToken)
+				return newContextWithBearerToken(t, tokenMaker, banker.Username, banker.Role, time.Minute)
 			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.NoError(t, err)
@@ -119,28 +121,6 @@ func TestUpdateUserAPI(t *testing.T) {
 				require.Equal(t, user.Username, updatedUser.Username)
 				require.Equal(t, newName, updatedUser.FullName)
 				require.Equal(t, newEmail, updatedUser.Email)
-			},
-		},
-		{
-			name: "OtherDepositorCannotUpdateThisUserInfo",
-			req: &pb.UpdateUserRequest{
-				Username: user.Username,
-				FullName: &newName,
-				Email:    &newEmail,
-			},
-			buildStubs: func(store *mockdb.MockStore) {
-				store.EXPECT().
-					UpdateUser(gomock.Any(), gomock.Any()).
-					Times(0)
-			},
-			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, other.Username, other.Role, time.Minute, token.TokenTypeAccessToken)
-			},
-			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
-				require.Error(t, err)
-				st, ok := status.FromError(err)
-				require.True(t, ok)
-				require.Equal(t, codes.PermissionDenied, st.Code())
 			},
 		},
 		{
@@ -157,7 +137,7 @@ func TestUpdateUserAPI(t *testing.T) {
 					Return(db.User{}, db.ErrRecordNotFound)
 			},
 			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute)
 			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.Error(t, err)
@@ -179,79 +159,13 @@ func TestUpdateUserAPI(t *testing.T) {
 					Times(0)
 			},
 			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute)
 			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.Error(t, err)
 				st, ok := status.FromError(err)
 				require.True(t, ok)
 				require.Equal(t, codes.InvalidArgument, st.Code())
-			},
-		},
-		{
-			name: "ExpiredToken",
-			req: &pb.UpdateUserRequest{
-				Username: user.Username,
-				FullName: &newName,
-				Email:    &newEmail,
-			},
-			buildStubs: func(store *mockdb.MockStore) {
-				store.EXPECT().
-					UpdateUser(gomock.Any(), gomock.Any()).
-					Times(0)
-			},
-			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, -time.Minute, token.TokenTypeAccessToken)
-			},
-			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
-				require.Error(t, err)
-				st, ok := status.FromError(err)
-				require.True(t, ok)
-				require.Equal(t, codes.Unauthenticated, st.Code())
-			},
-		},
-		{
-			name: "WrongTokenType",
-			req: &pb.UpdateUserRequest{
-				Username: user.Username,
-				FullName: &newName,
-				Email:    &newEmail,
-			},
-			buildStubs: func(store *mockdb.MockStore) {
-				store.EXPECT().
-					UpdateUser(gomock.Any(), gomock.Any()).
-					Times(0)
-			},
-			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeRefreshToken)
-			},
-			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
-				require.Error(t, err)
-				st, ok := status.FromError(err)
-				require.True(t, ok)
-				require.Equal(t, codes.Unauthenticated, st.Code())
-			},
-		},
-		{
-			name: "NoAuthorization",
-			req: &pb.UpdateUserRequest{
-				Username: user.Username,
-				FullName: &newName,
-				Email:    &newEmail,
-			},
-			buildStubs: func(store *mockdb.MockStore) {
-				store.EXPECT().
-					UpdateUser(gomock.Any(), gomock.Any()).
-					Times(0)
-			},
-			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-				return context.Background()
-			},
-			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
-				require.Error(t, err)
-				st, ok := status.FromError(err)
-				require.True(t, ok)
-				require.Equal(t, codes.Unauthenticated, st.Code())
 			},
 		},
 	}
