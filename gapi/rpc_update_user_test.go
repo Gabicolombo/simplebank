@@ -3,6 +3,7 @@ package gapi
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -63,9 +64,9 @@ func TestUpdateUserAPI(t *testing.T) {
 					Times(1).
 					Return(updatedUser, nil)
 			},
-			// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-			// 	return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
-			// },
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
+			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.NoError(t, err)
 				require.NotNil(t, res)
@@ -108,9 +109,9 @@ func TestUpdateUserAPI(t *testing.T) {
 					Times(1).
 					Return(updatedUser, nil)
 			},
-			// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-			// 	return newContextWithBearerToken(t, tokenMaker, banker.Username, banker.Role, time.Minute, token.TokenTypeAccessToken)
-			// },
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, banker.Username, banker.Role, time.Minute, token.TokenTypeAccessToken)
+			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.NoError(t, err)
 				require.NotNil(t, res)
@@ -132,9 +133,9 @@ func TestUpdateUserAPI(t *testing.T) {
 					UpdateUser(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
-			// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-			// 	return newContextWithBearerToken(t, tokenMaker, other.Username, other.Role, time.Minute, token.TokenTypeAccessToken)
-			// },
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, other.Username, other.Role, time.Minute, token.TokenTypeAccessToken)
+			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.Error(t, err)
 				st, ok := status.FromError(err)
@@ -142,29 +143,29 @@ func TestUpdateUserAPI(t *testing.T) {
 				require.Equal(t, codes.PermissionDenied, st.Code())
 			},
 		},
-		// {
-		// 	name: "UserNotFound",
-		// 	req: &pb.UpdateUserRequest{
-		// 		Username: user.Username,
-		// 		FullName: &newName,
-		// 		Email:    &newEmail,
-		// 	},
-		// 	buildStubs: func(store *mockdb.MockStore) {
-		// 		store.EXPECT().
-		// 			UpdateUser(gomock.Any(), gomock.Any()).
-		// 			Times(1).
-		// 			Return(db.User{}, db.ErrRecordNotFound)
-		// 	},
-		// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-		// 	return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
-		// },
-		// 	checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
-		// 		require.Error(t, err)
-		// 		st, ok := status.FromError(err)
-		// 		require.True(t, ok)
-		// 		require.Equal(t, codes.NotFound, st.Code())
-		// 	},
-		// },
+		{
+			name: "UserNotFound",
+			req: &pb.UpdateUserRequest{
+				Username: user.Username,
+				FullName: &newName,
+				Email:    &newEmail,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					UpdateUser(gomock.Any(), gomock.Any()).
+					Times(1).
+					Return(db.User{}, db.ErrRecordNotFound)
+			},
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
+			},
+			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
+				require.Error(t, err)
+				st, ok := status.FromError(err)
+				require.True(t, ok)
+				require.Equal(t, codes.NotFound, st.Code())
+			},
+		},
 		{
 			name: "InvalidEmail",
 			req: &pb.UpdateUserRequest{
@@ -177,9 +178,9 @@ func TestUpdateUserAPI(t *testing.T) {
 					UpdateUser(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
-			// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-			// 	return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
-			// },
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeAccessToken)
+			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.Error(t, err)
 				st, ok := status.FromError(err)
@@ -199,9 +200,9 @@ func TestUpdateUserAPI(t *testing.T) {
 					UpdateUser(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
-			// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-			// 	return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, -time.Minute, token.TokenTypeAccessToken)
-			// },
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, -time.Minute, token.TokenTypeAccessToken)
+			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.Error(t, err)
 				st, ok := status.FromError(err)
@@ -221,9 +222,9 @@ func TestUpdateUserAPI(t *testing.T) {
 					UpdateUser(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
-			// buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
-			// 	return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeRefreshToken)
-			// },
+			buildContext: func(t *testing.T, tokenMaker token.Maker) context.Context {
+				return newContextWithBearerToken(t, tokenMaker, user.Username, user.Role, time.Minute, token.TokenTypeRefreshToken)
+			},
 			checkResponse: func(t *testing.T, res *pb.UpdateUserResponse, err error) {
 				require.Error(t, err)
 				st, ok := status.FromError(err)

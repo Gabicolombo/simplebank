@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/techschool/simplebank/util"
 )
 
 type renewAccessTokenRequest struct {
@@ -68,6 +69,7 @@ func (server *Server) renewAccessToken(ctx *gin.Context) {
 
 	accessToken, accessPayload, err := server.tokenMaker.CreateToken(
 		refreshPayload.Username,
+		util.DepositorRole,
 		server.config.AccessTokenDuration,
 	)
 	if err != nil {

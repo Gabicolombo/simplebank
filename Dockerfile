@@ -14,6 +14,6 @@ RUN chmod +x /app/start.sh
 COPY db/migration ./db/migration
 COPY --from=builder /app/db/migration ./db/migration  
 
-EXPOSE 8088
+EXPOSE 8088 9099
 CMD ["/app/main"]
 ENTRYPOINT ["/app/start.sh"]

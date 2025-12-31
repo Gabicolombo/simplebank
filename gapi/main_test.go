@@ -1,6 +1,8 @@
 package gapi
 
 import (
+	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -8,6 +10,7 @@ import (
 	db "github.com/techschool/simplebank/db/sqlc"
 	"github.com/techschool/simplebank/util"
 	"github.com/techschool/simplebank/worker"
+	"google.golang.org/grpc/metadata"
 )
 
 func newTestServer(t *testing.T, store db.Store, taskDistributor worker.TaskDistributor) *Server {
@@ -22,16 +25,16 @@ func newTestServer(t *testing.T, store db.Store, taskDistributor worker.TaskDist
 	return server
 }
 
-// func newContextWithBearerToken(t *testing.T, tokenMaker token.Maker, username string, role string, duration time.Duration, tokenType token.TokenType) context.Context {
-// 	accessToken, _, err := tokenMaker.CreateToken(username, role, duration, tokenType)
-// 	require.NoError(t, err)
+func newContextWithBearerToken(t *testing.T, tokenMaker token.Maker, username string, role string, duration time.Duration, tokenType token.TokenType) context.Context {
+	accessToken, _, err := tokenMaker.CreateToken(username, role, duration, tokenType)
+	require.NoError(t, err)
 
-// 	bearerToken := fmt.Sprintf("%s %s", authorizationBearer, accessToken)
-// 	md := metadata.MD{
-// 		authorizationHeader: []string{
-// 			bearerToken,
-// 		},
-// 	}
+	bearerToken := fmt.Sprintf("%s %s", authorizationBearer, accessToken)
+	md := metadata.MD{
+		authorizationHeader: []string{
+			bearerToken,
+		},
+	}
 
-// 	return metadata.NewIncomingContext(context.Background(), md)
-// }
+	return metadata.NewIncomingContext(context.Background(), md)
+}
