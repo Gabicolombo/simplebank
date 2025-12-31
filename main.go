@@ -16,6 +16,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rakyll/statik/fs"
+	"github.com/rs/cors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/techschool/simplebank/api"
@@ -189,8 +190,14 @@ func runGatewayServer(ctx context.Context, waitGroup *errgroup.Group, config uti
 	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFS))
 	mux.Handle("/swagger/", swaggerHandler)
 
+	c := cors.New(cors.Options{
+		AllowedOrigins: config.AllowedOrigins,
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodPatch},
+		AllowedHeaders: []string{"Authorization", "Content-Type"},
+	})
+	handler := c.Handler(gapi.HttpLogger(mux))
 	httpServer := &http.Server{
-		Handler: gapi.HttpLogger(mux),
+		Handler: handler,
 		Addr:    config.HTTPServerAddress,
 	}
 

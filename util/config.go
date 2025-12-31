@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	Environment          string        `mapstructure:"ENVIRONMENT"`
+	AllowedOrigins       []string      `mapstructure:"ALLOWED_ORIGINS"`
 	RedisAddress         string        `mapstructure:"REDIS_ADDRESS"`
 	DBDriver             string        `mapstructure:"DB_DRIVER"`
 	DBSource             string        `mapstructure:"DB_SOURCE"`
